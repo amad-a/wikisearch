@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/wikisearch/static/css/main.e216ebf5.chunk.css",
-    "main.js": "/wikisearch/static/js/main.b851f38e.chunk.js",
-    "main.js.map": "/wikisearch/static/js/main.b851f38e.chunk.js.map",
+    "main.js": "/wikisearch/static/js/main.50274b92.chunk.js",
+    "main.js.map": "/wikisearch/static/js/main.50274b92.chunk.js.map",
     "runtime-main.js": "/wikisearch/static/js/runtime-main.61ecc1b9.js",
     "runtime-main.js.map": "/wikisearch/static/js/runtime-main.61ecc1b9.js.map",
     "static/js/2.d92b3335.chunk.js": "/wikisearch/static/js/2.d92b3335.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.61ecc1b9.js",
     "static/js/2.d92b3335.chunk.js",
     "static/css/main.e216ebf5.chunk.css",
-    "static/js/main.b851f38e.chunk.js"
+    "static/js/main.50274b92.chunk.js"
   ]
 }
