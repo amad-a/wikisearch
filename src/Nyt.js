@@ -6,7 +6,7 @@ const Nyt = () => {
 
     const Ziti = () => {
 
-        axios.get('https://cooking.nytimes.com/recipes/1018954-baked-ziti')
+        axios.get('https://www.bonappetit.com/recipe/soto-ayam-betawi')
             .then((res) => {
                 const $ = cheerio.load(res.data);
                 return $('.recipe-steps').text(); 

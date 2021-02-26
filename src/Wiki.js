@@ -9,32 +9,15 @@ const Wiki = () => {
 
   const [image, setImage] = useState("https://upload.wikimedia.org/wikipedia/commons/1/10/Tursiops_truncatus_01.jpg");
   const [title, setTitle] = useState("Dolphin");
+  const [width, setWidth] = useState(350);
+  const [height, setHeight] = useState(250);
 
-  const draw = (ctx, frameCount) => {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-    ctx.fillStyle = '#000000'
-    ctx.beginPath()
-    ctx.arc(50, 100, 20*Math.sin(frameCount*0.05)**2, 0, 2*Math.PI)
-    ctx.fill()
-  }
 
-  const Filter = () => {
 
-    var canvas = document.getElementById("myCanvas");
-    var ctx = canvas.getContext("2d");
-    var img = document.getElementById("wiki_image");
-    ctx.drawImage(img, 0, 0);
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData.data;
-    for (var i = 0; i < data.length; i += 8) {
-        var avg = (data[i] + data[i] + data[i]) / 12;
-        data[i] = avg; // red
-        data[i] = avg; // green
-        data[i] = avg; // blue
-    }
-    ctx.putImageData(imageData, 0, 0);
+  
+  
 
-  }
+
 
 
   const Search = async (e) => {
@@ -43,7 +26,7 @@ const Wiki = () => {
     const searchTerm = e.target.elements.searchTerm.value;
     
     if (!searchTerm) {
-      setTitle("no image found :(");
+      setTitle("check 1");
       return;
     }
 
@@ -52,21 +35,70 @@ const Wiki = () => {
     const search_response = await fetch(url_search);
     
     const search_json = await search_response.json();
-    console.log(search_json);
-    const term = search_json[3][0];
-    const pageURL = `https://en.wikipedia.org/w/api.php?origin=*&action=query&prop=pageimages&format=json&piprop=original&titles=${term.substr(30,)}`;
-    const page_url_response = await fetch(pageURL)
-    const final = await page_url_response.json();
+    if (search_json[3].length === 0){
+      setTitle("check 2");
+      return;
+
+    }
     
+    
+    const term = search_json[3][0];
+    const backup_term = search_json[3][1];
+
+
+
+    const pageURL = `https://en.wikipedia.org/w/api.php?origin=*&action=query&prop=pageimages&format=json&piprop=original&titles=${term.substr(30,)}`;
+    const pageURL2 = `https://en.wikipedia.org/w/api.php?origin=*&action=query&prop=pageimages&format=json&piprop=original&titles=${backup_term.substr(30,)}`;
+    const page_url_response = await fetch(pageURL)
+    const backup_response = await fetch(pageURL2)
+    const final = await page_url_response.json();
+    const backupfinal = await backup_response.json();
+    console.log(final)
+    console.log(backupfinal)
+    
+
+
+      
+
     if (Object.entries(final.query.pages)[0][1].original) {
       console.log(Object.entries(final.query.pages)[0][1].original.source);
+      console.log(Object.entries(final.query.pages)[0][1].original);
+      console.log(Object.entries(final.query.pages)[0][1].original.width);
+      console.log(Object.entries(final.query.pages)[0][1].original.height);
       setImage(Object.entries(final.query.pages)[0][1].original.source);
       setTitle(search_json[1][0]);
+
+      const w = Object.entries(final.query.pages)[0][1].original.width;
+      const h = Object.entries(final.query.pages)[0][1].original.height;
+    
+
+      setWidth(350);
+      setHeight(Math.floor((350/w)*h));
     }
+
+    else if (Object.entries(backupfinal.query.pages)[0][1].original) {
+      
+      setImage(Object.entries(backupfinal.query.pages)[0][1].original.source);
+      setTitle(search_json[1][0]);
+
+      console.log(Object.entries(backupfinal.query.pages)[0][1].original.source);
+      console.log(Object.entries(backupfinal.query.pages)[0][1].original);
+      console.log(Object.entries(backupfinal.query.pages)[0][1].original.width);
+      console.log(Object.entries(backupfinal.query.pages)[0][1].original.height);
+
+      const w = Object.entries(backupfinal.query.pages)[0][1].original.width;
+      const h = Object.entries(backupfinal.query.pages)[0][1].original.height;
+
+      setWidth(350);
+      setHeight(Math.floor((350/w)*h));
+
+    }
+
+
     else {
-      setTitle("no image found :(");
+      setTitle("check 3");
       setImage("");
-      console.log(Object.entries(final.query.pages));
+      //console.log(Object.entries(final.query));
     }
 
   }  
@@ -75,20 +107,19 @@ const Wiki = () => {
   return (
     <div>
       <div className="Box">
-        <h3>wiki search</h3>
+        <h3>Wiki Dither</h3>
         <p>search something on wikipedia (the free encyclopedia) and see 
-          its page image below. still buggy so some requests will not show!
-        </p>
+          its page image dithered using the <a href = "https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering">Floyd-Steinberg Dithering Algorithm</a>.
+         <br/>more dithering algorithms to come :) </p>
         <Form Search={Search}/>
         &nbsp;
-        <img id="wiki_image" src={image} width="300px"/>
-        <p className="caption">{title}</p>
+        <Canvas id="wiki_dither" src={image} w={width} h={height} />
+        <p className="caption">{title} dithered</p>
+        <Nyt />
+
+        
         </div>
 
-      <div className="Box">
-        <p>hello</p>
-        <Canvas width="300px" />
-      </div>
 
 
 
