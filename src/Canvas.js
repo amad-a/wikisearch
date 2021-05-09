@@ -4,46 +4,41 @@ const Canvas = props => {
 
     const canvasRef = useRef(null)
     
-    const draw = (ctx, cvs) => {
+    const draw = (ctx) => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.src = props.src;
       const w = 300;
       const h = (props.h); 
-      const test = ctx.width;
       img.crossOrigin = 'anonymous';
       ctx.drawImage(img, 0, 0, w, h);
       const imageData = ctx.getImageData(0, 0, w, h);
       const data = imageData.data;
       const len = data.length;
 
-      function palette(color) {
-        var c = parseInt(((color.r + color.g + color.b) / 3) > 128 ? 255 : 0);
+      const palette = (color) => {
+        let c = parseInt(((color.r + color.g + color.b) / 3) > 128 ? 255 : 0);
         return { r: c, g: c, b: c, a: 255 };
       }
             
-      function calculateQuantError(o, n) {
-          var oc = parseInt((o.r + o.g + o.b) / 3),
-          nc = parseInt((n.r + n.g + n.b) / 3);
+      const calculateQuantError = (o, n) => {
+          let oc = parseInt((o.r + o.g + o.b) / 3),
+              nc = parseInt((n.r + n.g + n.b) / 3);
           return { r: oc - nc, g: oc - nc, b: oc - nc, a: 255 };
       }
-      
-      for(var i = 0; i < len; i+=4) {
-          
-          var oldColor = {
+      for(let i = 0; i < len; i+=4) {
+          let oldColor = {
                   r: data[i+0],
                   g: data[i+1],
                   b: data[i+2],
                   a: data[i+3]
           };
-          var newColor = palette(oldColor);
-
+          let newColor = palette(oldColor);
           data[i+0] = newColor.r;
           data[i+1] = newColor.g;
           data[i+2] = newColor.b;
           data[i+3] = newColor.a;
-              
-          var qe = calculateQuantError(oldColor, newColor);
+          let qe = calculateQuantError(oldColor, newColor);
 
           try {
               data[i+0+4] += 7/16 * qe.r;
@@ -74,7 +69,6 @@ const Canvas = props => {
     }
   
   useEffect(() => {
-
     let timeout = 2000;
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
@@ -83,10 +77,9 @@ const Canvas = props => {
       window.cancelAnimationFrame(animationFrameId)
     }
     const render = () => {
-      draw(context, canvas)
+      draw(context)
       animationFrameId = window.requestAnimationFrame(render)
-      console.log("frame: " + animationFrameId)
-      
+      //console.log("frame: " + animationFrameId)
       setTimeout(cancel, timeout)
     }
     render()
