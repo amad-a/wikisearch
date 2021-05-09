@@ -1,5 +1,4 @@
 import React, { useState , useRef, useEffect} from 'react';
-import Nyt from './Nyt';
 import Form from './Form';
 import Canvas from './Canvas';
 const fetch = require("node-fetch");
@@ -8,124 +7,62 @@ const fetch = require("node-fetch");
 const Wiki = () => {
 
   const [image, setImage] = useState("https://upload.wikimedia.org/wikipedia/commons/1/10/Tursiops_truncatus_01.jpg");
-  const [title, setTitle] = useState("Dolphin");
-  const [width, setWidth] = useState(350);
-  const [height, setHeight] = useState(250);
+  const [title, setTitle] = useState("Dolphin dithered");
+  const [width, setWidth] = useState(300);
+  const [height, setHeight] = useState(210);
 
-
-
-  
-  
-
-
-
-
+   
   const Search = async (e) => {
 
     e.preventDefault();
     const searchTerm = e.target.elements.searchTerm.value;
-    
-    if (!searchTerm) {
-      setTitle("check 1");
+    if (!searchTerm){
       return;
     }
-
-    const url_search = `https://en.wikipedia.org/w/api.php?origin=*&action=opensearch&search=${searchTerm}&format=json`;
-
-    const search_response = await fetch(url_search);
+    const uriTerm = encodeURIComponent(searchTerm)
+    const url_search = `https://en.wikipedia.org/w/api.php?origin=*&action=opensearch&search=${uriTerm}&format=json`;
+    const response = await fetch(url_search);
+    const parsed = await response.json()
     
-    const search_json = await search_response.json();
-    if (search_json[3].length === 0){
-      setTitle("check 2");
-      return;
-
-    }
-    
-    
-    const term = search_json[3][0];
-    const backup_term = search_json[3][1];
-
-
-
-    const pageURL = `https://en.wikipedia.org/w/api.php?origin=*&action=query&prop=pageimages&format=json&piprop=original&titles=${term.substr(30,)}`;
-    const pageURL2 = `https://en.wikipedia.org/w/api.php?origin=*&action=query&prop=pageimages&format=json&piprop=original&titles=${backup_term.substr(30,)}`;
-    const page_url_response = await fetch(pageURL)
-    const backup_response = await fetch(pageURL2)
-    const final = await page_url_response.json();
-    const backupfinal = await backup_response.json();
-    console.log(final)
-    console.log(backupfinal)
-    
-
-
-      
-
-    if (Object.entries(final.query.pages)[0][1].original) {
-      console.log(Object.entries(final.query.pages)[0][1].original.source);
-      console.log(Object.entries(final.query.pages)[0][1].original);
-      console.log(Object.entries(final.query.pages)[0][1].original.width);
-      console.log(Object.entries(final.query.pages)[0][1].original.height);
-      setImage(Object.entries(final.query.pages)[0][1].original.source);
-      setTitle(search_json[1][0]);
-
-      const w = Object.entries(final.query.pages)[0][1].original.width;
-      const h = Object.entries(final.query.pages)[0][1].original.height;
-    
-
-      setWidth(350);
-      setHeight(Math.floor((350/w)*h));
-    }
-
-    else if (Object.entries(backupfinal.query.pages)[0][1].original) {
-      
-      setImage(Object.entries(backupfinal.query.pages)[0][1].original.source);
-      setTitle(search_json[1][0]);
-
-      console.log(Object.entries(backupfinal.query.pages)[0][1].original.source);
-      console.log(Object.entries(backupfinal.query.pages)[0][1].original);
-      console.log(Object.entries(backupfinal.query.pages)[0][1].original.width);
-      console.log(Object.entries(backupfinal.query.pages)[0][1].original.height);
-
-      const w = Object.entries(backupfinal.query.pages)[0][1].original.width;
-      const h = Object.entries(backupfinal.query.pages)[0][1].original.height;
-
-      setWidth(350);
-      setHeight(Math.floor((350/w)*h));
-
-    }
-
-
-    else {
-      setTitle("check 3");
-      setImage("");
-      //console.log(Object.entries(final.query));
-    }
-
-  }  
-
+    const pageTitle = parsed[1][0]
+    const encodedTitle = encodeURIComponent(parsed[1][0])
+    const template = `https://en.wikipedia.org/w/api.php?origin=*&action=query&format=json&formatversion=2&prop=pageimages%7Cpageterms&titles=${encodedTitle}&pilimit=3&piprop=original&pilicense=any&wbptterms=description&redirects=`
+    const image_response = await fetch(template);
+    const image_parsed = await image_response.json();
   
+    if (image_parsed.query.pages[0].hasOwnProperty('original')){
+      if ((image_parsed.query.pages[0].original.width) > 7000){
+         setTitle('image too large!');
+         return;
+      }
+        console.log(image_parsed.query.pages[0].original)
+        const w = image_parsed.query.pages[0].original.width;
+        const h = image_parsed.query.pages[0].original.height;
+        setImage(image_parsed.query.pages[0].original.source);
+        setWidth(300);
+        setHeight(Math.floor((300/w)*h));
+        setTitle(pageTitle + " dithered");
+    }
+    else {
+      setTitle('image not found!')
+      return;
+    }  
+  } 
+
   return (
-    <div>
+    <div className="container">
       <div className="Box">
-        <h3>Wiki Dither</h3>
-        <p>search something on wikipedia (the free encyclopedia) and see 
-          its page image dithered using the <a href = "https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering">Floyd-Steinberg Dithering Algorithm</a>.
-         <br/>more dithering algorithms to come :) </p>
+        <h3>WikiDither</h3>
+        <p>search something on Wikipedia (the free encyclopedia) and see 
+        its page image dithered using the <a href = "https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering">Floyd-Steinberg Dithering Algorithm</a>.
+        </p>
         <Form Search={Search}/>
         &nbsp;
-        <Canvas id="wiki_dither" src={image} w={width} h={height} />
-        <p className="caption">{title} dithered</p>
-        <Nyt />
-
-        
-        </div>
-
-
-
-
+        <Canvas className="dithered-image" id="wiki_dither" src={image} w={width} h={height} />
+        <p className="caption">{title}</p>
+      </div>
     </div>
   )
-
 }
 
 export default Wiki;
