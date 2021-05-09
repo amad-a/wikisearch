@@ -10,14 +10,23 @@ const Wiki = () => {
   const [title, setTitle] = useState("Dolphin dithered");
   const [width, setWidth] = useState(300);
   const [height, setHeight] = useState(210);
-  const [option, setOption] = useState("color")
+  const [option, setOption] = useState("color");
+  const [optionSafari, setOptionSafari] = useState("color");
 
+  const checkBrowser = (event) => {
+  /*safari has no support for nativeEvent.submitter right now, so defaults to optionSafari state taken at form button click. temporary fix, not ideal because the timing for setOptionSafari is not synced with image change and there is a delay when switching between different color options. but it works.*/
+    if (!event.nativeEvent.submitter){
+      setOption(optionSafari);
+    } else {
+      setOption(event.nativeEvent.submitter.name)
+    }
+  }
    
   const Search = async (e) => {
+
     e.preventDefault();
     const searchTerm = e.target.elements.searchTerm.value;
-    const type = e.nativeEvent.submitter.name;
-    console.log('type: ' + type)
+    console.log(e.submitter)
     if (!searchTerm){
       return;
     };
@@ -43,7 +52,7 @@ const Wiki = () => {
         setWidth(300);
         setHeight(Math.floor((300/w)*h));
         setTitle(imageParsedSmall.query.pages[0].title + " dithered");
-        setOption(type)
+        checkBrowser(e);
     } else if (imageParsedLarge.query.pages[0].hasOwnProperty('original')) {
         console.log("original used: " + imageParsedLarge.query.pages[0]);
         const w = imageParsedLarge.query.pages[0].original.width;
@@ -52,12 +61,14 @@ const Wiki = () => {
         setWidth(300);
         setHeight(Math.floor((300/w)*h));
         setTitle(imageParsedLarge.query.pages[0].title + " dithered");
-        setOption(type)
+        checkBrowser(e)
     } else {
       setTitle('image not found!');
       return;
     };
   }; 
+
+
 
   const download = () => {
     let download = document.getElementById("download");
@@ -74,7 +85,7 @@ const Wiki = () => {
         <p>search something on Wikipedia (the free encyclopedia) and see 
         its page image dithered using the <a href="https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering">
         Floyd-Steinberg Dithering Algorithm</a>.</p>
-        <Form Search={Search}/>
+        <Form Search={Search} setOptionSafari={setOptionSafari}/>
         &nbsp;
         <Canvas className="dithered-image" id="wiki_dither" src={image} w={width} h={height} option={option}/>
         <div className="caption-grid">

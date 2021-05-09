@@ -5,11 +5,12 @@ const Canvas = props => {
     const canvasRef = useRef(null)
     
     const draw = (ctx) => {
+
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.src = props.src;
-      const w = 300;
-      const h = (props.h); 
+      const w = props.w;
+      const h = props.h; 
       img.crossOrigin = 'anonymous';
       ctx.drawImage(img, 0, 0, w, h);
       const imageData = ctx.getImageData(0, 0, w, h);
@@ -73,7 +74,7 @@ const Canvas = props => {
               data[i+3+4+w*4] += 1/16 * qe.a;
           } catch(e) {console.log(e)}
           }
-          ctx.putImageData(imageData, 0, 0); 
+          ctx.putImageData(imageData, 0, 0);  
     }
   
   useEffect(() => {
