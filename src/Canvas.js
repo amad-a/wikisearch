@@ -89,7 +89,7 @@ const Canvas = props => {
   }, [draw])
 
   return (
-    <canvas width={props.w} height={props.h} ref={canvasRef} {...props}/>
+    <canvas id="ditherCanvas" width={props.w} height={props.h} ref={canvasRef} {...props}/>
   ) 
 }
 

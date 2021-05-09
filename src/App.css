@@ -2,14 +2,27 @@
   text-align: center;
 }
 
+a {
+  color: rgb(113, 113, 113);
+}
+
 p {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: monospace;
   font-weight: lighter;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 a:hover {
   color: red;
+}
+
+.caption-grid {
+  margin-right: 10px;
+  padding: 10px 0px 0px 15px;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: 1fr;
+  align-content: center;
 }
 
 h3 {
@@ -21,15 +34,18 @@ h3 {
 }
 
 .caption {
-  text-align: center;
+  text-align: left;
+  grid-column: 1 / 6;
+  font-size: 13px;
 }
 
 .Textbox {
-  border-style: groove;
-  border-width: 2px;
-  border-color: black;
-  padding: 5px;
-  font-size: 15px;
+  border-style: ridge;
+  border-width: 3px;
+  font-family: monospace;
+  font-size: 13px;
+  border-color: rgb(180, 180, 180);
+  padding: 5px 8px 5px 8px;
   grid-column: 1 / 7;
 }
 
@@ -40,24 +56,49 @@ h3 {
   gap: 10px;
 }
 
+.download-container {
+  grid-column: 6 / 9;
+  align-content: right;
+  margin: 5px -5px 10px 10px;
+}
+
+.download-button {
+  color: rgb(93, 93, 93);
+  font-family: monospace;
+  font-weight: light;
+  border: 3px ridge rgb(180, 180, 180);
+  padding: 7px;
+  font-size: 12px;
+  background-color: white;
+}
+
+.download-button:hover {
+  background-color: rgb(118, 118, 118);
+  color: white;
+  cursor: pointer;
+}
+
 .Search-button {
+  color: rgb(93, 93, 93);
   grid-column: 7 / 9;
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: bold;
-  border: 2px groove black;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  font-weight: 700;
+  border: 3px ridge rgb(180, 180, 180);
   padding: 5px;
   font-size: 15px;
   background-color: white;
 }
 
 .Search-button:hover {
-  background-color: black;
+  background-color: rgb(118, 118, 118);
   color: white;
   cursor: pointer;
+  font-style: italic;
 }
 
 .Box {
-  border: 2px groove black;
+  border: 3px ridge rgb(180, 180, 180);
   padding: 20px;
   width: auto;
   font-family: "Courier New", monospace;
@@ -74,7 +115,8 @@ h3 {
   padding: 0px;
   margin: 0px;
   margin-top: 20px;
-  margin-left: -4px;
+  margin-left: -6px;
+  border: 3px ridge rgb(180, 180, 180);
 }
 
 @media (min-width: 480px) {
@@ -84,7 +126,7 @@ h3 {
   .dithered-image {
     width: 450px;
     align-content: center;
-    margin-left: 4px;
+    margin-left: 3px;
   }
   .Textbox {
     grid-column: 1 / 7;
@@ -97,5 +139,11 @@ h3 {
   .Search-button {
     grid-column: 7 / 9;
     align-content: right;
+  }
+
+  .download-container {
+    grid-column: 7 / 9;
+    align-content: right;
+    margin: 5px -5px 10px 10px;
   }
 }

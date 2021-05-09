@@ -43,18 +43,29 @@ const Wiki = () => {
     };
   }; 
 
+  const download = () => {
+    let download = document.getElementById("download");
+    let image = document.getElementById("wiki_dither").toDataURL("image/png")
+        .replace("image/png", "image/octet-stream");
+    download.setAttribute("href", image);
+  }
+
   return (
     <div className="container">
       <div className="Box">
         <h3>WikiDither</h3>
         <p>search something on Wikipedia (the free encyclopedia) and see 
-        its page image dithered using the 
-        <a href="https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering">
+        its page image dithered using the <a href="https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering">
         Floyd-Steinberg Dithering Algorithm</a>.</p>
         <Form Search={Search}/>
         &nbsp;
         <Canvas className="dithered-image" id="wiki_dither" src={image} w={width} h={height} />
-        <p className="caption">{title}</p>
+        <div className="caption-grid">
+          <p className="caption">{title}</p>
+          <a className="download-container" id="download" download="dithered_image.png">
+            <button type="button" className="download-button" onClick={() => download()}>Download ↴</button>
+          </a>
+        </div>
       </div>
     </div>
   )
