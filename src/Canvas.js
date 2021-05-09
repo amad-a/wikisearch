@@ -17,8 +17,15 @@ const Canvas = props => {
       const len = data.length;
 
       const palette = (color) => {
-        let c = parseInt(((color.r + color.g + color.b) / 3) > 128 ? 255 : 0);
-        return { r: c, g: c, b: c, a: 255 };
+        if (props.option === 'color'){
+          let color_r = Math.floor((color.r / 32)) << 6;
+          let color_g = Math.floor((color.g / 32)) << 6;
+          let color_b = Math.floor((color.b / 32)) << 6;
+          return { r: color_r, g: color_g, b: color_b, a: 255 };
+        } else {
+          let c = parseInt(((color.r + color.g + color.b) / 3) > 128 ? 255 : 0);
+          return { r: c, g: c, b: c, a: 255 }; 
+        }
       }
             
       const calculateQuantError = (o, n) => {
@@ -26,6 +33,7 @@ const Canvas = props => {
               nc = parseInt((n.r + n.g + n.b) / 3);
           return { r: oc - nc, g: oc - nc, b: oc - nc, a: 255 };
       }
+      
       for(let i = 0; i < len; i+=4) {
           let oldColor = {
                   r: data[i+0],
@@ -45,25 +53,25 @@ const Canvas = props => {
               data[i+1+4] += 7/16 * qe.g;
               data[i+2+4] += 7/16 * qe.b;
               data[i+3+4] += 7/16 * qe.a;
-          } catch(e) {}
+          } catch(e) {console.log(e)}
           try {
               data[i+0-4+w*4] += 3/16 * qe.r;
               data[i+1-4+w*4] += 3/16 * qe.g;
               data[i+2-4+w*4] += 3/16 * qe.b;
               data[i+3-4+w*4] += 3/16 * qe.a;
-          } catch(e) {}
+          } catch(e) {console.log(e)}
           try {
               data[i+0+w*4] += 5/16 * qe.r;
               data[i+1+w*4] += 5/16 * qe.g;
               data[i+2+w*4] += 5/16 * qe.b;
               data[i+3+w*4] += 5/16 * qe.a;
-          } catch(e) {}
+          } catch(e) {console.log(e)}
           try {
               data[i+0+4+w*4] += 1/16 * qe.r;
               data[i+1+4+w*4] += 1/16 * qe.g;
               data[i+2+4+w*4] += 1/16 * qe.b;
               data[i+3+4+w*4] += 1/16 * qe.a;
-          } catch(e) {}
+          } catch(e) {console.log(e)}
           }
           ctx.putImageData(imageData, 0, 0); 
     }
